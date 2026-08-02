@@ -5,9 +5,6 @@ PREFERRED_PROVIDER_virtual/kernel ?= "amd-linux-tiny"
 PREFERRED_PROVIDER_jpeg ?= "jpeg"
 PREFERRED_PROVIDER_jpeg-native ?= "jpeg-native"
 
-ACPI_DEBUG ?= "0"
-ACPI_DEBUG_KERNEL_ARGS ?= "log_buf_len=16M acpi.debug_layer=0x00000002 acpi.debug_level=0x00000004"
-
 AMD_ESSENTIAL_EXTRA_RDEPENDS ?= ""
 
 # QEMU does not support some of the enhanced instructions available
