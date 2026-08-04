@@ -17,7 +17,7 @@ KPROTOCOL ?= "protocol=https"
 KBRANCH:amd ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
 
-KSRC ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git"
+KSRC ?= " git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
 SRC_URI = "${KSRC};${KPROTOCOL};${KBRANCH}"
 
