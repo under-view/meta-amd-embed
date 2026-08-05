@@ -10,8 +10,8 @@ SRCREV ?= "065e2e2eaa2bbfcb66f47e9dddc462b453d94ea4"
 S = "${UNPACKDIR}/${BPN}-${PV}"
 
 do_install() {
-    install -d ${D}${datadir}/linux-cfgs-${PV}
-    cp -r ${S}/linux-${PV}/* ${D}${datadir}/linux-cfgs-${PV}
+    install -d ${D}${datadir}/linux-cfgs
+    cp -r ${S}/linux-${PV}/* ${D}${datadir}/linux-cfgs
 }
 
 BBCLASSEXTEND += "native"
