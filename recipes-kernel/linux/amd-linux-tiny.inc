@@ -84,7 +84,7 @@ KCONFIG_SYMBOLS ?= "\
 
 do_configure:append() {
     for kcfg in ${KCONFIG_SYMBOLS}; do
-        cat ${STAGING_DATADIR_NATIVE}/linux-cfgs-${PV}/${kcfg} >> ${B}/.config
+        cat ${STAGING_DATADIR_NATIVE}/linux-cfgs/${kcfg} >> ${B}/.config
     done
 }
 
