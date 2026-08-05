@@ -14,10 +14,11 @@ RECIPE_NO_UPDATE_REASON = "Recipe is updated through a separate process"
 KERNEL_DEBUG ?= "False"
 KMACHINE ?= "common-pc-64"
 KPROTOCOL ?= "protocol=https"
-KBRANCH:amd ?= "tag=v${PV};mindepth=1;nobranch=1"
+KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
+KSRC ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-KSRC ?= " git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
+PV = "${LINUX_VERSION}"
 
 SRC_URI = "${KSRC};${KPROTOCOL};${KBRANCH}"
 
@@ -60,11 +61,6 @@ KERNEL_CC:append = " -std=gnu17"
 COMPATIBLE_MACHINE = "${MACHINE}"
 
 KERNEL_VERSION_SANITY_SKIP ?= "1"
-
-INC_PR := "r0"
-
-PR := "${INC_PR}.1"
-PV = "${LINUX_VERSION}+git"
 
 LINUX_KERNEL_TYPE = "tiny"
 KCONFIG_MODE = "--allnoconfig"
