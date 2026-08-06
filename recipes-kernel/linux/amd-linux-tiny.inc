@@ -69,6 +69,7 @@ KBUILD_DEFCONFIG = "tiny.config"
 KCONFIG_SYMBOLS ?= "\
     ${@bb.utils.contains('ACPI_DEBUG', '1', 'acpi-debug.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd.cfg', '', d)} \
+    ${@bb.utils.contains('INITRAMFS_IMAGE_BUNDLE', '1', 'initramfs.cfg', 'initrd.cfg', d)} \
     x86_64/arch.cfg \
     console.cfg \
     disk.cfg \
