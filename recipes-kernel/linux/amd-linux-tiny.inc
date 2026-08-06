@@ -12,7 +12,6 @@ UPSTREAM_CHECK_GITTAGREGEX = "(?P<pver>\d+\.\d+(\.\d+)*)"
 RECIPE_NO_UPDATE_REASON = "Recipe is updated through a separate process"
 
 KERNEL_DEBUG ?= "False"
-KMACHINE ?= "common-pc-64"
 KPROTOCOL ?= "protocol=https"
 KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
