@@ -12,6 +12,10 @@ IMAGE_POSTPROCESS_COMMAND = ""
 
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
 
+do_rootfs() {
+    :
+}
+
 do_image_wic[depends] += "\
     grub-native:do_populate_sysroot \
     grub:do_populate_sysroot \
