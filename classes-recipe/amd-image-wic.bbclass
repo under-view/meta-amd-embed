@@ -2,21 +2,26 @@ SUMMARY = "Building WIC Images"
 
 LICENSE = "MIT"
 
-inherit image
+inherit image nospdx
 
 AMD_IMAGE_DEPENDS ?= ""
 
+IMAGE_INSTALL = ""
+IMAGE_LINGUAS = ""
+IMAGE_FEATURES = ""
+DISTRO_FEATURES = ""
+SDKIMAGE_FEATURES = ""
 INITRAMFS_MAXSIZE = ""
 IMAGE_NAME_SUFFIX = ""
 IMAGE_ROOTFS_SIZE = "0"
 IMAGE_ROOTFS_EXTRA_SPACE = "0"
 IMAGE_POSTPROCESS_COMMAND = ""
+IMAGE_PREPROCESS_COMMAND:remove = "reproducible_final_image_task"
 
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
 
-do_rootfs() {
-    :
-}
+do_rootfs[noexec] = "1"
+do_create_rootfs_spdx[noexec] = "1"
 
 do_image_wic[vardeps] += "\
     AMD_IMAGE_DEPENDS \
