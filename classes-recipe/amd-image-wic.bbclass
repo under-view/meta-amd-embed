@@ -20,8 +20,13 @@ IMAGE_PREPROCESS_COMMAND:remove = "reproducible_final_image_task"
 
 IMAGE_FSTYPES = "wic wic.gz wic.bmap"
 
-do_rootfs[noexec] = "1"
+do_rootfs() {
+    :
+}
+
+do_create_image_spdx[noexec] = "1"
 do_create_rootfs_spdx[noexec] = "1"
+do_create_image_sbom_spdx[noexec] = "1"
 
 do_image_wic[vardeps] += "\
     AMD_IMAGE_DEPENDS \
