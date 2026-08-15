@@ -37,5 +37,6 @@ do_image_wic[depends] += "\
     grub-native:do_populate_sysroot \
     grub:do_populate_sysroot \
     grub-efi:do_populate_sysroot \
+    util-linux-native:do_populate_sysroot \
     ${@' '.join([image + ':do_image_complete' for image in d.getVar('AMD_IMAGE_DEPENDS').split()])} \
     "
