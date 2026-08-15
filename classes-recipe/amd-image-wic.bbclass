@@ -40,3 +40,5 @@ do_image_wic[depends] += "\
     util-linux-native:do_populate_sysroot \
     ${@' '.join([image + ':do_image_complete' for image in d.getVar('AMD_IMAGE_DEPENDS').split()])} \
     "
+
+WKS_FILE_DEPENDS_BOOTLOADERS:remove = "systemd-boot"
