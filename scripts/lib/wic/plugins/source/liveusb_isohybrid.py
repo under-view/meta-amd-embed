@@ -46,7 +46,7 @@ class LiveusbIsohybrid(SourcePlugin):
     part /boot --label LIVEUSB --source liveusb_isohybrid --sourceparams="loaders=grub-efi|syslinux"
 
     NOT FULLY SUPPORTED YET
-    part /boot --label LIVEUSB --source liveusb_isohybrid --sourceparams="loaders=systemd-boot|syslinux"
+    part /boot --label LIVEUSB --source liveusb_isohybrid --sourceparams="loaders=grub|grub-efi"
     """
 
     name = 'liveusb_isohybrid'
@@ -57,7 +57,6 @@ class LiveusbIsohybrid(SourcePlugin):
         # Prefer to utilize wic-tools recipe-sysroot
         isolinux_dir = "%s/isolinux" % isodir
         syslinux_dir = bootimg_dir + "/syslinux"
-        bootloader_extra_dir = kernel_dir + "/bootloader-extra"
 
         if not syslinux_dir:
             raise WicError("Couldn't find STAGING_DATADIR, exiting.")
@@ -68,7 +67,7 @@ class LiveusbIsohybrid(SourcePlugin):
         install_cmd = "install -d %s" % isolinux_dir
         exec_cmd(install_cmd)
 
-        install_cmd = "install -m 444 %s/isolinux.cfg " % bootloader_extra_dir
+        install_cmd = "install -m 444 %s/isolinux.cfg " % kernel_dir
         install_cmd += "%s/isolinux.cfg" % isolinux_dir
         exec_cmd(install_cmd)
 
@@ -90,7 +89,7 @@ class LiveusbIsohybrid(SourcePlugin):
 
         # Required for splash screen
 
-        install_cmd = "install -m 644 %s/amd.jpg " % bootloader_extra_dir
+        install_cmd = "install -m 644 %s/amd.jpg " % kernel_dir
         install_cmd += "%s/amd.jpg" % isolinux_dir
         exec_cmd(install_cmd)
 
@@ -108,8 +107,6 @@ class LiveusbIsohybrid(SourcePlugin):
 
     @staticmethod
     def _install_grub_efi(isodir, kernel_dir, native_sysroot):
-        bootloader_extra_dir = "%s/bootloader-extra" % kernel_dir
-
         target_dir = "%s/EFI/BOOT" % isodir
         if os.path.exists(target_dir):
             shutil.rmtree(target_dir)
@@ -134,7 +131,7 @@ class LiveusbIsohybrid(SourcePlugin):
         grub_src = "%s/%s" % (kernel_dir, grub_src_image)
         grub_target = "%s/%s" % (target_dir, grub_dest_image)
 
-        grub_cfg_src = "%s/grub.cfg" % (bootloader_extra_dir)
+        grub_cfg_src = "%s/grub.cfg" % (kernel_dir)
         grub_cfg_target = "%s/grub.cfg" % (target_dir)
 
         shutil.copy(grub_src, grub_target, follow_symlinks=True)
