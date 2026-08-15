@@ -224,7 +224,7 @@ class GrubInstall(SourcePlugin):
         mkimage_format_efi = get_bitbake_var('GRUB_MKIMAGE_FORMAT_EFI')
 
         if not grub_cfg:
-            grub_cfg = creator.ks.bootloader.configfile
+            grub_cfg = "%s/%s" % (kernel_dir, creator.ks.bootloader.configfile)
         if not grub_prefix_path:
             grub_prefix_path = '/boot/grub'
 
