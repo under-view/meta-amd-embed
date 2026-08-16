@@ -11,3 +11,21 @@ gen_build_artifact_dir() {
 }
 
 IMAGE_POSTPROCESS_COMMAND:append = " gen_build_artifact_dir;"
+
+# Define your custom post-processing cleanup function
+python clean_build_artifact_dir() {
+    import os
+    import shutil
+
+    artifacts_pn_dir = d.getVar('AMD_ARTIFACTS_PN_DIR')
+    if os.path.exists(artifacts_pn_dir):
+        shutil.rmtree(artifacts_pn_dir)
+
+    artifacts_dir = d.getVar('AMD_ARTIFACTS_DIR')
+    if len(os.listdir(artifacts_dir)) == 0:
+        os.rmdir(artifacts_dir)
+}
+
+# Add python execution to the clean sequence
+clean_custom_image_dirs[deptask] = ""
+do_clean[postfuncs] += "clean_build_artifact_dir"
