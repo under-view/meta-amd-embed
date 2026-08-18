@@ -53,12 +53,6 @@ class LiveusbIsohybrid(SourcePlugin):
     # Can be kernel + initramfs or kernel + initrd
     LIVEUSB_CONSOLE = 'bzImage-initramfs-${MACHINE}.bin'
     LIVEUSB_INSTALL = 'bzImage-initramfs-install-${MACHINE}.bin'
-
-    WICVARS:append = "\
-        LIVEUSB_INITRAMFS \
-        LIVEUSB_CONSOLE \
-        LIVEUSB_INSTALL \
-        "
     """
 
     name = 'liveusb_isohybrid'
