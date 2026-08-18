@@ -47,6 +47,18 @@ class LiveusbIsohybrid(SourcePlugin):
 
     NOT FULLY SUPPORTED YET
     part /boot --label LIVEUSB --source liveusb_isohybrid --sourceparams="loaders=grub|grub-efi"
+
+    # Optional variables
+    LIVEUSB_INITRAMFS = '1'
+    # Can be kernel + initramfs or kernel + initrd
+    LIVEUSB_CONSOLE = 'bzImage-initramfs-${MACHINE}.bin'
+    LIVEUSB_INSTALL = 'bzImage-initramfs-install-${MACHINE}.bin'
+
+    WICVARS:append = "\
+        LIVEUSB_INITRAMFS \
+        LIVEUSB_CONSOLE \
+        LIVEUSB_INSTALL \
+        "
     """
 
     name = 'liveusb_isohybrid'
@@ -174,20 +186,27 @@ class LiveusbIsohybrid(SourcePlugin):
 
     @staticmethod
     def _install_kernel(isodir, kernel_dir):
-        kernel = "%s/%s" % (kernel_dir, get_bitbake_var("KERNEL_IMAGETYPE"))
-        shutil.copy(kernel, isodir, follow_symlinks=True)
+        if get_bitbake_var('LIVEUSB_INITRAMFS') != '1':
+            kernel = "%s/%s" % (kernel_dir, get_bitbake_var("KERNEL_IMAGETYPE"))
+            shutil.copy(kernel, isodir, follow_symlinks=True)
 
     @staticmethod
     def _install_initrd(isodir, kernel_dir):
-        machine = get_bitbake_var("MACHINE")
-        initrd_name = get_bitbake_var("INITRD")
-        initrd_fstype = get_bitbake_var("INITRAMFS_FSTYPE")
-        initrd_install_name = get_bitbake_var("INITRD_INSTALL")
+        console = ''
+        install = ''
 
-        initrd = "%s/%s-%s.rootfs.%s" % (kernel_dir,initrd_name,machine,initrd_fstype)
-        initrd_install = "%s/%s-%s.rootfs.%s" % (kernel_dir,initrd_install_name,machine,initrd_fstype)
-        shutil.copy(initrd, isodir + "/initrd", follow_symlinks=True)
-        shutil.copy(initrd_install, isodir + "/initrd-install", follow_symlinks=True)
+        liveusb_console = get_bitbake_var("LIVEUSB_CONSOLE")
+        liveusb_install = get_bitbake_var("LIVEUSB_INSTALL")
+
+        if liveusb_console:
+            console = "%s/%s" % (kernel_dir,liveusb_console)
+        if liveusb_install:
+            install = "%s/%s" % (kernel_dir,liveusb_install)
+
+        if console:
+            shutil.copy(console, isodir + "/console", follow_symlinks=True)
+        if install:
+            shutil.copy(install, isodir + "/install", follow_symlinks=True)
 
     @staticmethod
     def _create_iso_image(isodir, iso_img, native_sysroot, part):
