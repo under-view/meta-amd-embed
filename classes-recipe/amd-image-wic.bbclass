@@ -31,7 +31,6 @@ do_create_image_sbom_spdx[noexec] = "1"
 do_image_wic[vardeps] += "\
     ${WICVARS} \
     AMD_IMAGE_DEPENDS \
-    AMD_ARTIFACTS_DIR \
     "
 
 do_image_wic[depends] += "\
