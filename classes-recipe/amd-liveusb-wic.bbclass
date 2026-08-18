@@ -1,6 +1,13 @@
 inherit amd-image-wic
 
-do_image_wic[vardeps] += "\
+LIVEUSB_CONSOLE ??= ""
+LIVEUSB_INSTALL ??= ""
+LIVEUSB_INITRAMFS ??= "0"
+
+WICVARS:append = "\
+    LIVEUSB_INITRAMFS \
+    LIVEUSB_CONSOLE \
+    LIVEUSB_INSTALL \
     AMD_ARTIFACTS_DIR \
     "
 
