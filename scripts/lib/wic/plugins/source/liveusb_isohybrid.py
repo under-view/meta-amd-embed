@@ -148,7 +148,7 @@ class LiveusbIsohybrid(SourcePlugin):
             with os.scandir(amd_artifacts_dir) as artifacts:
                 for artifact in artifacts:
                     grub_cfg.write("menuentry 'install (%s)' {\n" % artifact.name)
-                    grub_cfg.write("\tlinux /%s %s\n" % (kernel, kernel_args))
+                    grub_cfg.write("\tlinux /%s INSTALL=%s %s\n" % (artifact.name, kernel, kernel_args))
                     if liveusb_initramfs == '0':
                         grub_cfg.write("\tinitrd /install\n" % kernel)
                     grub_cfg.write("}\n\n")
