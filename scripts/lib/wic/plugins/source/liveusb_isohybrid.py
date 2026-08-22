@@ -112,6 +112,50 @@ class LiveusbIsohybrid(SourcePlugin):
         exec_cmd(install_cmd)
 
     @staticmethod
+    def _install_grub_cfg(target_dir, kernel_dir):
+        kernel = ''
+        kernel_args = ''
+
+        liveusb_console = get_bitbake_var("LIVEUSB_CONSOLE")
+        liveusb_install = get_bitbake_var("LIVEUSB_INSTALL")
+        liveusb_initramfs = get_bitbake_var("LIVEUSB_INITRAMFS")
+        amd_artifacts_dir = get_bitbake_var('AMD_ARTIFACTS_DIR')
+
+        if get_bitbake_var('LIVEUSB_KERNEL_ARGS'):
+            kernel_args = get_bitbake_var('LIVEUSB_KERNEL_ARGS')
+
+        kernel = "console" if liveusb_initramfs == '1' else get_bitbake_var("KERNEL_IMAGETYPE")
+
+        grub_cfg = open("%s/grub.cfg" % target_dir, "w", encoding="utf-8")
+
+        grub_cfg.write("serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1\n\n")
+        grub_cfg.write("terminal_input serial console\n")
+        grub_cfg.write("terminal_output serial console\n\n")
+        grub_cfg.write("set default=0\n\n")
+        grub_cfg.write("# Boot automatically after 50 secs.\n")
+        grub_cfg.write("set timeout=50\n\n")
+
+        if liveusb_console:
+            grub_cfg.write("menuentry 'console' {\n")
+            grub_cfg.write("\tlinux /%s %s\n" % (kernel, kernel_args))
+            if liveusb_initramfs == '0':
+                grub_cfg.write("\tinitrd /console\n" % kernel)
+            grub_cfg.write("}\n\n")
+
+        kernel = "install" if liveusb_initramfs == '1' else get_bitbake_var("KERNEL_IMAGETYPE")
+
+        if liveusb_install and amd_artifacts_dir:
+            with os.scandir(amd_artifacts_dir) as artifacts:
+                for artifact in artifacts:
+                    grub_cfg.write("menuentry 'install (%s)' {\n" % artifact.name)
+                    grub_cfg.write("\tlinux /%s %s\n" % (kernel, kernel_args))
+                    if liveusb_initramfs == '0':
+                        grub_cfg.write("\tinitrd /install\n" % kernel)
+                    grub_cfg.write("}\n\n")
+
+        grub_cfg.close()
+
+    @staticmethod
     def _install_grub_efi(isodir, kernel_dir, native_sysroot):
         target_dir = "%s/EFI/BOOT" % isodir
         if os.path.exists(target_dir):
@@ -134,16 +178,8 @@ class LiveusbIsohybrid(SourcePlugin):
         else:
             raise WicError("grub-efi is incompatible with target %s" % target_arch)
 
-        grub_src = "%s/%s" % (kernel_dir, grub_src_image)
-        grub_target = "%s/%s" % (target_dir, grub_dest_image)
-
-        grub_cfg_src = "%s/grub.cfg" % (kernel_dir)
-        grub_cfg_target = "%s/grub.cfg" % (target_dir)
-
-        shutil.copy(grub_src, grub_target, follow_symlinks=True)
-        shutil.copy(grub_cfg_src, grub_cfg_target, follow_symlinks=True)
-
         # Create startup script
+        LiveusbIsohybrid._install_grub_cfg(target_dir, kernel_dir)
         uefi_script = "printf 'fs0:/EFI/BOOT/%s' > %s/startup.nsh" % (grub_dest_image,isodir)
         exec_native_cmd(uefi_script, native_sysroot)
 
