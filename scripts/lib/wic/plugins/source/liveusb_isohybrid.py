@@ -58,11 +58,60 @@ class LiveusbIsohybrid(SourcePlugin):
     name = 'liveusb_isohybrid'
 
     @staticmethod
+    def _install_isolinux_cfg(isolinux_dir, kernel_dir):
+        kernel = ''
+        kernel_args = ''
+
+        liveusb_console = get_bitbake_var("LIVEUSB_CONSOLE")
+        liveusb_install = get_bitbake_var("LIVEUSB_INSTALL")
+        liveusb_initramfs = get_bitbake_var("LIVEUSB_INITRAMFS")
+        amd_artifacts_dir = get_bitbake_var('AMD_ARTIFACTS_DIR')
+
+        if get_bitbake_var('LIVEUSB_KERNEL_ARGS'):
+            kernel_args = get_bitbake_var('LIVEUSB_KERNEL_ARGS')
+
+        kernel = "console" if liveusb_initramfs == '1' else get_bitbake_var("KERNEL_IMAGETYPE")
+
+        isolinux_cfg = open("%s/isolinux.cfg" % isolinux_dir, "w", encoding="utf-8")
+
+        isolinux_cfg.write("serial 0 115200\n\n")
+        isolinux_cfg.write("# Boot automatically after 50 secs.\n")
+        isolinux_cfg.write("timeout 500\n\n")
+        isolinux_cfg.write("menu title Liveusb\n\n")
+        isolinux_cfg.write("promt 0\n\n")
+
+        if liveusb_console:
+            isolinux_cfg.write("label console\n")
+            isolinux_cfg.write("\tmenu label console\n")
+            isolinux_cfg.write("\tmenu default\n")
+            isolinux_cfg.write("\tkernel /%s\n" % kernel)
+            if liveusb_initramfs == '0':
+                isolinux_cfg.write("\tappend initrd=/console %s\n" % kernel_args)
+            else:
+                isolinux_cfg.write("\tappend %s\n\n" % kernel_args)
+
+        kernel = "install" if liveusb_initramfs == '1' else get_bitbake_var("KERNEL_IMAGETYPE")
+
+        if liveusb_install and amd_artifacts_dir:
+            with os.scandir(amd_artifacts_dir) as artifacts:
+                for artifact in artifacts:
+                    isolinux_cfg.write("label %s\n" % artifact.name)
+                    isolinux_cfg.write("\tmenu label install (%s)\n" % artifact.name)
+                    isolinux_cfg.write("\tmenu default\n")
+                    isolinux_cfg.write("\tkernel /%s\n" % kernel)
+                    if liveusb_initramfs == '0':
+                        isolinux_cfg.write("\tappend initrd=/install INSTALL=%s %s\n" % (artifact.name, kernel_args))
+                    else:
+                        isolinux_cfg.write("\tappend INSTALL=%s %s\n" % (artifact.name, kernel_args))
+
+        isolinux_cfg.close()
+
+    @staticmethod
     def _install_syslinux(isodir, kernel_dir, bootimg_dir):
         # Prepare files for legacy boot
         # Prefer to utilize wic-tools recipe-sysroot
         isolinux_dir = "%s/isolinux" % isodir
-        syslinux_dir = bootimg_dir + "/syslinux"
+        syslinux_dir = "%s/syslinux" % bootimg_dir
 
         if not syslinux_dir:
             raise WicError("Couldn't find STAGING_DATADIR, exiting.")
@@ -73,9 +122,7 @@ class LiveusbIsohybrid(SourcePlugin):
         install_cmd = "install -d %s" % isolinux_dir
         exec_cmd(install_cmd)
 
-        install_cmd = "install -m 444 %s/isolinux.cfg " % kernel_dir
-        install_cmd += "%s/isolinux.cfg" % isolinux_dir
-        exec_cmd(install_cmd)
+        LiveusbIsohybrid._install_isolinux_cfg(isolinux_dir, kernel_dir)
 
         install_cmd = "install -m 444 %s/ldlinux.sys " % syslinux_dir
         install_cmd += "%s/ldlinux.sys" % isolinux_dir
