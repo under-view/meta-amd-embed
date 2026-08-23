@@ -1,6 +1,6 @@
-PREFERRED_VERSION_linux-yocto ?= "6.12%"
-PREFERRED_VERSION_linux-yocto-rt ?= "6.12%"
-PREFERRED_PROVIDER_virtual/kernel ?= "amd-linux-tiny"
+PREFERRED_VERSION_linux-yocto ??= "6.12%"
+PREFERRED_VERSION_linux-yocto-rt ??= "6.12%"
+PREFERRED_PROVIDER_virtual/kernel ??= "amd-linux-tiny"
 
 PREFERRED_PROVIDER_jpeg ?= "jpeg"
 PREFERRED_PROVIDER_jpeg-native ?= "jpeg-native"
