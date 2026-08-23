@@ -58,7 +58,7 @@ class LiveusbIsohybrid(SourcePlugin):
     name = 'liveusb_isohybrid'
 
     @staticmethod
-    def _install_isolinux_cfg(isolinux_dir, kernel_dir):
+    def _install_isolinux_cfg(isolinux_dir, liveusb_splash, kernel_dir):
         kernel = ''
         kernel_args = ''
 
@@ -79,6 +79,10 @@ class LiveusbIsohybrid(SourcePlugin):
         isolinux_cfg.write("timeout 500\n\n")
         isolinux_cfg.write("menu title Liveusb\n\n")
         isolinux_cfg.write("promt 0\n\n")
+
+        if liveusb_splash:
+            isolinux_cfg.write("ui vesamenu.c32\n")
+            isolinux_cfg.write("menu background amd.jpg\n\n")
 
         if liveusb_console:
             isolinux_cfg.write("label console\n")
@@ -113,6 +117,8 @@ class LiveusbIsohybrid(SourcePlugin):
         isolinux_dir = "%s/isolinux" % isodir
         syslinux_dir = "%s/syslinux" % bootimg_dir
 
+        liveusb_splash = get_bitbake_var("LIVEUSB_SPLASH")
+
         if not syslinux_dir:
             raise WicError("Couldn't find STAGING_DATADIR, exiting.")
 
@@ -122,7 +128,7 @@ class LiveusbIsohybrid(SourcePlugin):
         install_cmd = "install -d %s" % isolinux_dir
         exec_cmd(install_cmd)
 
-        LiveusbIsohybrid._install_isolinux_cfg(isolinux_dir, kernel_dir)
+        LiveusbIsohybrid._install_isolinux_cfg(isolinux_dir, liveusb_splash, kernel_dir)
 
         install_cmd = "install -m 444 %s/ldlinux.sys " % syslinux_dir
         install_cmd += "%s/ldlinux.sys" % isolinux_dir
@@ -141,22 +147,22 @@ class LiveusbIsohybrid(SourcePlugin):
         exec_cmd(install_cmd)
 
         # Required for splash screen
+        if liveusb_splash:
+            install_cmd = "install -m 644 %s/%s " % (kernel_dir, liveusb_splash)
+            install_cmd += "%s/amd.jpg" % isolinux_dir
+            exec_cmd(install_cmd)
 
-        install_cmd = "install -m 644 %s/amd.jpg " % kernel_dir
-        install_cmd += "%s/amd.jpg" % isolinux_dir
-        exec_cmd(install_cmd)
+            install_cmd = "install -m 444 %s/libcom32.c32 " % syslinux_dir
+            install_cmd += "%s/libcom32.c32" % isolinux_dir
+            exec_cmd(install_cmd)
 
-        install_cmd = "install -m 444 %s/libcom32.c32 " % syslinux_dir
-        install_cmd += "%s/libcom32.c32" % isolinux_dir
-        exec_cmd(install_cmd)
+            install_cmd = "install -m 444 %s/libutil.c32 " % syslinux_dir
+            install_cmd += "%s/libutil.c32" % isolinux_dir
+            exec_cmd(install_cmd)
 
-        install_cmd = "install -m 444 %s/libutil.c32 " % syslinux_dir
-        install_cmd += "%s/libutil.c32" % isolinux_dir
-        exec_cmd(install_cmd)
-
-        install_cmd = "install -m 444 %s/vesamenu.c32 " % syslinux_dir
-        install_cmd += "%s/vesamenu.c32" % isolinux_dir
-        exec_cmd(install_cmd)
+            install_cmd = "install -m 444 %s/vesamenu.c32 " % syslinux_dir
+            install_cmd += "%s/vesamenu.c32" % isolinux_dir
+            exec_cmd(install_cmd)
 
     @staticmethod
     def _install_grub_cfg(target_dir, kernel_dir):
