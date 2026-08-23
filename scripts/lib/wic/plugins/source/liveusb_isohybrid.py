@@ -58,7 +58,8 @@ class LiveusbIsohybrid(SourcePlugin):
     name = 'liveusb_isohybrid'
 
     @staticmethod
-    def _install_isolinux_cfg(isolinux_dir, liveusb_splash, kernel_dir):
+    def _install_isolinux_cfg(isolinux_dir, liveusb_splash,
+                              kernel_dir, bootloader):
         kernel = ''
         kernel_args = ''
 
@@ -74,9 +75,8 @@ class LiveusbIsohybrid(SourcePlugin):
 
         isolinux_cfg = open("%s/isolinux.cfg" % isolinux_dir, "w", encoding="utf-8")
 
-        isolinux_cfg.write("serial 0 115200\n\n")
-        isolinux_cfg.write("# Boot automatically after 50 secs.\n")
-        isolinux_cfg.write("timeout 500\n\n")
+        isolinux_cfg.write("serial 0 115200\n")
+        isolinux_cfg.write("timeout %s\n\n" % (bootloader.timeout or 50))
         isolinux_cfg.write("menu title Liveusb\n\n")
         isolinux_cfg.write("promt 0\n\n")
 
@@ -111,7 +111,7 @@ class LiveusbIsohybrid(SourcePlugin):
         isolinux_cfg.close()
 
     @staticmethod
-    def _install_syslinux(isodir, kernel_dir, bootimg_dir):
+    def _install_syslinux(isodir, creator, kernel_dir, bootimg_dir):
         # Prepare files for legacy boot
         # Prefer to utilize wic-tools recipe-sysroot
         isolinux_dir = "%s/isolinux" % isodir
@@ -128,7 +128,9 @@ class LiveusbIsohybrid(SourcePlugin):
         install_cmd = "install -d %s" % isolinux_dir
         exec_cmd(install_cmd)
 
-        LiveusbIsohybrid._install_isolinux_cfg(isolinux_dir, liveusb_splash, kernel_dir)
+        bootloader = creator.ks.bootloader
+        LiveusbIsohybrid._install_isolinux_cfg(isolinux_dir, liveusb_splash,
+                                               kernel_dir, bootloader)
 
         install_cmd = "install -m 444 %s/ldlinux.sys " % syslinux_dir
         install_cmd += "%s/ldlinux.sys" % isolinux_dir
@@ -165,7 +167,7 @@ class LiveusbIsohybrid(SourcePlugin):
             exec_cmd(install_cmd)
 
     @staticmethod
-    def _install_grub_cfg(target_dir, kernel_dir):
+    def _install_grub_cfg(target_dir, kernel_dir, bootloader):
         kernel = ''
         kernel_args = ''
 
@@ -185,8 +187,7 @@ class LiveusbIsohybrid(SourcePlugin):
         grub_cfg.write("terminal_input serial console\n")
         grub_cfg.write("terminal_output serial console\n\n")
         grub_cfg.write("set default=0\n\n")
-        grub_cfg.write("# Boot automatically after 50 secs.\n")
-        grub_cfg.write("set timeout=50\n\n")
+        grub_cfg.write("set timeout=%s\n\n" % (bootloader.timeout or 50))
 
         if liveusb_console:
             grub_cfg.write("menuentry 'console' {\n")
@@ -209,7 +210,7 @@ class LiveusbIsohybrid(SourcePlugin):
         grub_cfg.close()
 
     @staticmethod
-    def _install_grub_efi(isodir, kernel_dir, native_sysroot):
+    def _install_grub_efi(isodir, creator, kernel_dir, native_sysroot):
         target_dir = "%s/EFI/BOOT" % isodir
         if os.path.exists(target_dir):
             shutil.rmtree(target_dir)
@@ -231,8 +232,10 @@ class LiveusbIsohybrid(SourcePlugin):
         else:
             raise WicError("grub-efi is incompatible with target %s" % target_arch)
 
+        bootloader = creator.ks.bootloader
+        LiveusbIsohybrid._install_grub_cfg(target_dir, kernel_dir, bootloader)
+
         # Create startup script
-        LiveusbIsohybrid._install_grub_cfg(target_dir, kernel_dir)
         uefi_script = "printf 'fs0:/EFI/BOOT/%s' > %s/startup.nsh" % (grub_dest_image,isodir)
         exec_native_cmd(uefi_script, native_sysroot)
 
@@ -324,9 +327,9 @@ class LiveusbIsohybrid(SourcePlugin):
         if os.path.exists(isodir):
             shutil.rmtree(isodir)
 
-        cls._install_grub_efi(isodir, kernel_dir, native_sysroot)
+        cls._install_grub_efi(isodir, creator, kernel_dir, native_sysroot)
         cls._install_efi_image(isodir, kernel_dir, native_sysroot, source_params, part)
-        cls._install_syslinux(isodir, kernel_dir, bootimg_dir)
+        cls._install_syslinux(isodir, creator, kernel_dir, bootimg_dir)
         cls._install_kernel(isodir, kernel_dir)
         cls._install_initrd(isodir, kernel_dir)
 
