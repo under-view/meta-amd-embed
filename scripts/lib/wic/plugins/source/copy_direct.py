@@ -65,7 +65,7 @@ class CopyDirect(SourcePlugin):
             elif os.path.isfile(entry):
                 shutil.copy2(entry, wdir, follow_symlinks=True)
             elif os.path.isdir(entry):
-                shutil.copytree(entry, wdir)
+                shutil.copytree(entry, wdir, dirs_exist_ok=True)
             else:
                 raise WicError("Invalid option '%s'" % entry)
 
