@@ -137,7 +137,7 @@ class LiveusbIsohybrid(SourcePlugin):
         exec_cmd(install_cmd)
 
         install_cmd = "install -m 444 %s/isohdpfx.bin " % syslinux_dir
-        install_cmd += "%s/isolinux/isohdpfx.bin" % isodir
+        install_cmd += "%s/isohdpfx.bin" % isolinux_dir
         exec_cmd(install_cmd)
 
         install_cmd = "install -m 644 %s/isolinux.bin " % syslinux_dir
