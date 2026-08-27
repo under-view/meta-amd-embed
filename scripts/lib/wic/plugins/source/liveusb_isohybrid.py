@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 # DESCRIPTION
-# This implements the 'x64-liveusb-isohybrid' source plugin class for 'wic'
+# This implements the 'liveusb_isohybrid' source plugin class for 'wic'
 # Searches for most files in deploy directory of a given MACHINE.
 #
 # AUTHORS
@@ -48,10 +48,14 @@ class LiveusbIsohybrid(SourcePlugin):
     NOT FULLY SUPPORTED YET
     part /boot --label LIVEUSB --source liveusb_isohybrid --sourceparams="loaders=grub|grub-efi"
 
-    # Optional variables
+    ###### Variables ######
+
+    # Set variable to 1 if initramfs
     LIVEUSB_INITRAMFS = '1'
+    LIVEUSB_SPLASH = "amd.jpg"
+    LIVEUSB_KERNEL_ARGS = "${KERNEL_ARGS}"
     # Can be kernel + initramfs or kernel + initrd
-    LIVEUSB_CONSOLE = 'bzImage-initramfs-${MACHINE}.bin'
+    LIVEUSB_CONSOLE = 'bzImage-initramfs-console-${MACHINE}.bin'
     LIVEUSB_INSTALL = 'bzImage-initramfs-install-${MACHINE}.bin'
     """
 
