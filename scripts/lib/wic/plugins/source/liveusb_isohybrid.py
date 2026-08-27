@@ -83,6 +83,8 @@ class LiveusbIsohybrid(SourcePlugin):
         if liveusb_splash:
             isolinux_cfg.write("ui vesamenu.c32\n")
             isolinux_cfg.write("menu background amd.jpg\n\n")
+        else:
+            isolinux_cfg.write("ui menu.c32\n")
 
         if liveusb_console:
             isolinux_cfg.write("label console\n")
@@ -148,22 +150,28 @@ class LiveusbIsohybrid(SourcePlugin):
         install_cmd += "%s/ldlinux.c32" % isolinux_dir
         exec_cmd(install_cmd)
 
-        # Required for splash screen
+        # Required for menu screen
+        install_cmd = "install -m 444 %s/libutil.c32 " % syslinux_dir
+        install_cmd += "%s/libutil.c32" % isolinux_dir
+        exec_cmd(install_cmd)
+
+        install_cmd = "install -m 444 %s/libcom32.c32 " % syslinux_dir
+        install_cmd += "%s/libcom32.c32" % isolinux_dir
+        exec_cmd(install_cmd)
+
         if liveusb_splash:
+            # Required for splash screen
             install_cmd = "install -m 644 %s/%s " % (kernel_dir, liveusb_splash)
             install_cmd += "%s/amd.jpg" % isolinux_dir
             exec_cmd(install_cmd)
 
-            install_cmd = "install -m 444 %s/libcom32.c32 " % syslinux_dir
-            install_cmd += "%s/libcom32.c32" % isolinux_dir
-            exec_cmd(install_cmd)
-
-            install_cmd = "install -m 444 %s/libutil.c32 " % syslinux_dir
-            install_cmd += "%s/libutil.c32" % isolinux_dir
-            exec_cmd(install_cmd)
-
             install_cmd = "install -m 444 %s/vesamenu.c32 " % syslinux_dir
             install_cmd += "%s/vesamenu.c32" % isolinux_dir
+            exec_cmd(install_cmd)
+        else:
+            # Required for text screen
+            install_cmd = "install -m 444 %s/menu.c32 " % syslinux_dir
+            install_cmd += "%s/menu.c32" % isolinux_dir
             exec_cmd(install_cmd)
 
     @staticmethod
