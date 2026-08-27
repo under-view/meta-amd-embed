@@ -83,6 +83,7 @@ class LiveusbIsohybrid(SourcePlugin):
         isolinux_cfg.write("timeout %s\n\n" % (bootloader.timeout or 50))
         isolinux_cfg.write("menu title Liveusb\n\n")
         isolinux_cfg.write("promt 0\n\n")
+        isolinux_cfg.write("default console\n\n")
 
         if liveusb_splash:
             isolinux_cfg.write("ui vesamenu.c32\n")
@@ -107,7 +108,6 @@ class LiveusbIsohybrid(SourcePlugin):
                 for artifact in artifacts:
                     isolinux_cfg.write("label %s\n" % artifact.name)
                     isolinux_cfg.write("\tmenu label install (%s)\n" % artifact.name)
-                    isolinux_cfg.write("\tmenu default\n")
                     isolinux_cfg.write("\tkernel /%s\n" % kernel)
                     if liveusb_initramfs == '0':
                         isolinux_cfg.write("\tappend initrd=/install INSTALL=%s %s\n" % (artifact.name, kernel_args))
