@@ -10,7 +10,7 @@ gen_build_artifact_dir() {
     ln --relative -sf "${wic_path}.bmap" "${AMD_ARTIFACTS_PN_DIR}"
 }
 
-IMAGE_POSTPROCESS_COMMAND:append = " gen_build_artifact_dir;"
+IMAGE_POSTPROCESS_COMMAND:append = "gen_build_artifact_dir;"
 
 # Define your custom post-processing cleanup function
 python clean_build_artifact_dir() {
