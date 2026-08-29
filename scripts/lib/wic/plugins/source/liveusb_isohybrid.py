@@ -53,7 +53,8 @@ class LiveusbIsohybrid(SourcePlugin):
     # Set variable to 1 if initramfs
     LIVEUSB_INITRAMFS = '1'
     LIVEUSB_SPLASH = "amd.jpg"
-    LIVEUSB_KERNEL_ARGS = "${KERNEL_ARGS}"
+    LIVEUSB_GRUB_KERNEL_ARGS = "${KERNEL_ARGS}"
+    LIVEUSB_SYSLINUX_KERNEL_ARGS = "${KERNEL_ARGS}"
     # Can be kernel + initramfs or kernel + initrd
     LIVEUSB_CONSOLE = 'bzImage-initramfs-console-${MACHINE}.bin'
     LIVEUSB_INSTALL = 'bzImage-initramfs-install-${MACHINE}.bin'
@@ -72,8 +73,8 @@ class LiveusbIsohybrid(SourcePlugin):
         liveusb_initramfs = get_bitbake_var("LIVEUSB_INITRAMFS")
         amd_artifacts_dir = get_bitbake_var('AMD_ARTIFACTS_DIR')
 
-        if get_bitbake_var('LIVEUSB_KERNEL_ARGS'):
-            kernel_args = get_bitbake_var('LIVEUSB_KERNEL_ARGS')
+        if get_bitbake_var('LIVEUSB_SYSLINUX_KERNEL_ARGS'):
+            kernel_args = get_bitbake_var('LIVEUSB_SYSLINUX_KERNEL_ARGS')
 
         kernel = "console" if liveusb_initramfs == '1' else get_bitbake_var("KERNEL_IMAGETYPE")
 
@@ -188,8 +189,8 @@ class LiveusbIsohybrid(SourcePlugin):
         liveusb_initramfs = get_bitbake_var("LIVEUSB_INITRAMFS")
         amd_artifacts_dir = get_bitbake_var('AMD_ARTIFACTS_DIR')
 
-        if get_bitbake_var('LIVEUSB_KERNEL_ARGS'):
-            kernel_args = get_bitbake_var('LIVEUSB_KERNEL_ARGS')
+        if get_bitbake_var('LIVEUSB_GRUB_KERNEL_ARGS'):
+            kernel_args = get_bitbake_var('LIVEUSB_GRUB_KERNEL_ARGS')
 
         kernel = "console" if liveusb_initramfs == '1' else get_bitbake_var("KERNEL_IMAGETYPE")
 
