@@ -12,7 +12,16 @@ PACKAGE_INSTALL = "\
     ${AMD_INSTALL} \
     "
 
-IMAGE_FEATURES = ""
+AUTO_LOGIN_ROOT ?= "0"
+
+AUTO_LOGIN_FEATS = "\
+    serial-autologin-root \
+    empty-root-password \
+    allow-empty-password \
+    allow-root-login \
+    "
+
+IMAGE_FEATURES = "${@bb.utils.contains('AUTO_LOGIN_ROOT', '1', '${AUTO_LOGIN_FEATS}', '', d)}"
 IMAGE_LINGUAS = ""
 
 COPY_LIC_MANIFEST = "0"
