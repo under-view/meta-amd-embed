@@ -252,6 +252,10 @@ class LiveusbIsohybrid(SourcePlugin):
         uefi_script = "printf 'fs0:/EFI/BOOT/%s' > %s/startup.nsh" % (grub_dest_image,isodir)
         exec_native_cmd(uefi_script, native_sysroot)
 
+        grub_efi_app_src = "%s/%s" % (kernel_dir, grub_src_image)
+        grub_efi_app_dest = "%s/%s" % (target_dir, grub_dest_image)
+        shutil.copy2(grub_efi_app_src, grub_efi_app_dest, follow_symlinks=True)
+
     @staticmethod
     def _install_efi_image(isodir, kernel_dir, native_sysroot, source_params, part):
         # Default to 100 blocks of extra space for file system overhead
