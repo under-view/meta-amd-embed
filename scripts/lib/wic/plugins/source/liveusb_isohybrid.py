@@ -81,16 +81,20 @@ class LiveusbIsohybrid(SourcePlugin):
         isolinux_cfg = open("%s/isolinux.cfg" % isolinux_dir, "w", encoding="utf-8")
 
         isolinux_cfg.write("serial 0 115200\n")
+        isolinux_cfg.write("promt 0\n")
+        isolinux_cfg.write("allowoptions 0\n")
+        isolinux_cfg.write("noescape 0\n\n")
+
         isolinux_cfg.write("timeout %s\n\n" % (bootloader.timeout or 50))
-        isolinux_cfg.write("menu title Liveusb\n\n")
-        isolinux_cfg.write("promt 0\n\n")
-        isolinux_cfg.write("default console\n\n")
 
         if liveusb_splash:
             isolinux_cfg.write("ui vesamenu.c32\n")
             isolinux_cfg.write("menu background amd.jpg\n\n")
         else:
             isolinux_cfg.write("ui menu.c32\n")
+
+        isolinux_cfg.write("menu title Liveusb\n\n")
+        isolinux_cfg.write("default console\n\n")
 
         if liveusb_console:
             isolinux_cfg.write("label console\n")
@@ -162,6 +166,10 @@ class LiveusbIsohybrid(SourcePlugin):
 
         install_cmd = "install -m 444 %s/libcom32.c32 " % syslinux_dir
         install_cmd += "%s/libcom32.c32" % isolinux_dir
+        exec_cmd(install_cmd)
+
+        install_cmd = "install -m 444 %s/libmenu.c32 " % syslinux_dir
+        install_cmd += "%s/libmenu.c32" % isolinux_dir
         exec_cmd(install_cmd)
 
         if liveusb_splash:
