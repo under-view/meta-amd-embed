@@ -256,7 +256,8 @@ class GrubInstall(SourcePlugin):
         if cls.boot_type in boot_types:
             install_dir = '%s/%s' % (wdir, cls.grub_prefix_path)
             os.makedirs(install_dir, exist_ok=True)
-            shutil.copy2(cls.grub_cfg, install_dir, follow_symlinks=True)
+            shutil.copy2(cls.grub_cfg, '%s/grub.cfg' % \
+                (install_dir), follow_symlinks=True)
 
     @classmethod
     def handle_install_grub_mods(cls, wdir, grub_format):
