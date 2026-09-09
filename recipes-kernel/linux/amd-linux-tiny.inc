@@ -15,11 +15,18 @@ KERNEL_DEBUG ?= "False"
 KPROTOCOL ?= "protocol=https"
 KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
+AMD_KERNEL_CACHE_URI ?= "git://github.com/under-view/amd-kernel-cache.git;protocol=https;branch=master"
 KSRC ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
+SRCREV_amdmeta ?= "71bfcc0ba65c20e941fc64ec1f93c24a71c7e25e"
 
 PV = "${LINUX_VERSION}"
 
-SRC_URI = "${KSRC};${KPROTOCOL};${KBRANCH}"
+SRC_URI = "\
+    ${KSRC};${KPROTOCOL};${KBRANCH};name=machine \
+    ${AMD_KERNEL_CACHE_URI};name=amdmeta;type=kmeta;destsuffix=amd-meta \
+    "
+
+KERNEL_FEATURES ?= ""
 
 # Skip processing of this recipe if it is not explicitly specified as the
 # PREFERRED_PROVIDER for virtual/kernel. This avoids network access required
