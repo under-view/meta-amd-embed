@@ -28,15 +28,6 @@ SRC_URI = "\
 
 KERNEL_FEATURES ?= ""
 
-# Skip processing of this recipe if it is not explicitly specified as the
-# PREFERRED_PROVIDER for virtual/kernel. This avoids network access required
-# by the use of AUTOREV SRCREVs, which are the default for this recipe.
-python () {
-    if d.getVar("KERNEL_PACKAGE_NAME") == "kernel" and d.getVar("PREFERRED_PROVIDER_virtual/kernel") != d.getVar("PN"):
-        d.delVar("BB_DONT_CACHE")
-        raise bb.parse.SkipRecipe("Set PREFERRED_PROVIDER_virtual/kernel to %s to enable it" % (d.getVar("PN")))
-}
-
 # These used to be version specific, but are now common dependencies.  New
 # tools / dependencies will continue to be added in version specific recipes.
 DEPENDS += '${@bb.utils.contains_any("ARCH", [ "x86", "arm64", "powerpc" ], "elfutils-native", "", d)}'
@@ -59,9 +50,6 @@ do_install:append(){
 do_kernel_configme[depends] += '${@bb.utils.contains("KERNEL_DEBUG", "True", "pahole-native:do_populate_sysroot", "", d)}'
 
 EXTRA_OEMAKE += '${@bb.utils.contains("KERNEL_DEBUG", "True", "", "PAHOLE=false", d)}'
-
-# Fixes builds with GCC 15+
-KERNEL_CC:append = " -std=gnu17"
 
 COMPATIBLE_MACHINE = "${MACHINE}"
 
