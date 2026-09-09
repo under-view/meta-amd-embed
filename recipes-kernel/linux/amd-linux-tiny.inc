@@ -64,29 +64,6 @@ LINUX_KERNEL_TYPE = "tiny"
 KCONFIG_MODE = "--allnoconfig"
 KBUILD_DEFCONFIG = "tiny.config"
 
-KCONFIG_SYMBOLS ?= "\
-    ${@bb.utils.contains('ACPI_DEBUG', '1', 'acpi-debug.cfg', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd.cfg', '', d)} \
-    ${@bb.utils.contains('INITRAMFS_IMAGE_BUNDLE', '1', 'initrd.cfg', '', d)} \
-    x86_64/arch.cfg \
-    console.cfg \
-    disk.cfg \
-    efi.cfg \
-    filesystem.cfg \
-    generic.cfg \
-    graphics.cfg \
-    input.cfg \
-    liveusb.cfg \
-    network.cfg \
-    pci.cfg \
-    "
-
-do_configure:append() {
-    for kcfg in ${KCONFIG_SYMBOLS}; do
-        cat ${STAGING_DATADIR_NATIVE}/linux-cfgs/${kcfg} >> ${B}/.config
-    done
-}
-
 do_devshell:prepend() {
     # setup native pkg-config variables (kconfig scripts call pkg-config directly, cannot generically be overriden to pkg-config-native)
     d.setVar("PKG_CONFIG_DIR", "${STAGING_DIR_NATIVE}${libdir_native}/pkgconfig")
