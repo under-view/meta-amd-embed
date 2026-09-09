@@ -34,7 +34,6 @@ python () {
 # tools / dependencies will continue to be added in version specific recipes.
 DEPENDS += '${@bb.utils.contains_any("ARCH", [ "x86", "arm64", "powerpc" ], "elfutils-native", "", d)}'
 DEPENDS += "openssl-native util-linux-native"
-DEPENDS += "tiny-linux-kconfigs-native"
 DEPENDS += "gmp-native libmpc-native"
 DEPENDS += "xz-native bc-native"
 
