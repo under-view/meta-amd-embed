@@ -11,22 +11,28 @@ UPSTREAM_CHECK_GITTAGREGEX = "(?P<pver>\d+\.\d+(\.\d+)*)"
 
 RECIPE_NO_UPDATE_REASON = "Recipe is updated through a separate process"
 
+KMETA ?= "amd-meta"
 KERNEL_DEBUG ?= "False"
+AMD_KERNEL_FEATURES ?= ""
 KPROTOCOL ?= "protocol=https"
 KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
 AMD_KERNEL_CACHE_URI ?= "git://github.com/under-view/amd-kernel-cache.git;protocol=https;branch=master"
 KSRC ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
-SRCREV_amdmeta ?= "71bfcc0ba65c20e941fc64ec1f93c24a71c7e25e"
+SRCREV_amdmeta ?= "4a764f78530d7c5a3c40806af49803a4a5427455"
 
 PV = "${LINUX_VERSION}"
+PV_MAJOR_MINOR = "${@'.'.join(d.getVar('PV').split('.')[:2])}"
 
 SRC_URI = "\
     ${KSRC};${KPROTOCOL};${KBRANCH};name=machine \
-    ${AMD_KERNEL_CACHE_URI};name=amdmeta;type=kmeta;destsuffix=amd-meta \
+    ${AMD_KERNEL_CACHE_URI};name=amdmeta;type=kmeta;destsuffix=${KMETA} \
     "
 
-KERNEL_FEATURES ?= ""
+KERNEL_FEATURES = "\
+    linux-${PV_MAJOR_MINOR}/features/amdx64-generic.scc \
+    ${AMD_KERNEL_FEATURES} \
+    "
 
 # These used to be version specific, but are now common dependencies.  New
 # tools / dependencies will continue to be added in version specific recipes.
