@@ -31,6 +31,7 @@ SRC_URI = "\
 
 KERNEL_FEATURES = "\
     linux-${PV_MAJOR_MINOR}/features/amdx64-generic.scc \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd.scc', '', d)} \
     ${AMD_KERNEL_FEATURES} \
     "
 
