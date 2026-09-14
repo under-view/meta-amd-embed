@@ -13,7 +13,6 @@ RECIPE_NO_UPDATE_REASON = "Recipe is updated through a separate process"
 
 KMETA ?= "amd-meta"
 KERNEL_DEBUG ?= "False"
-AMD_KERNEL_FEATURES ?= ""
 KPROTOCOL ?= "protocol=https"
 KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
@@ -29,11 +28,12 @@ SRC_URI = "\
     ${AMD_KERNEL_CACHE_URI};name=amdmeta;type=kmeta;destsuffix=${KMETA} \
     "
 
-KERNEL_FEATURES = "\
-    linux-${PV_MAJOR_MINOR}/features/amdx64-generic.scc \
+AMD_KERNEL_FEATURES ?= "\
+    amdx64-generic.scc \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd.scc', '', d)} \
-    ${AMD_KERNEL_FEATURES} \
     "
+
+KERNEL_FEATURES = "${@' '.join(['linux-'+d.getVar('PV_MAJOR_MINOR')+'/features/'+feat for feat in d.getVar('AMD_KERNEL_FEATURES').split()])}"
 
 # These used to be version specific, but are now common dependencies.  New
 # tools / dependencies will continue to be added in version specific recipes.
