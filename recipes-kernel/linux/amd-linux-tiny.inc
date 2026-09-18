@@ -18,7 +18,7 @@ KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
 AMD_KERNEL_CACHE_URI ?= "git://github.com/under-view/amd-kernel-cache.git;protocol=https;branch=master"
 KSRC ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
-SRCREV_amdmeta ?= "67f6694fb63c6979af0f705ed19d64cd65f14cf8"
+SRCREV_amdmeta ?= "49518b0b5d40c74a26265a779c0a5b5d05ed5d30"
 
 PV = "${LINUX_VERSION}"
 PV_MAJOR_MINOR = "${@'.'.join(d.getVar('PV').split('.')[:2])}"
@@ -30,7 +30,10 @@ SRC_URI = "\
 
 AMD_KERNEL_FEATURES ?= "\
     amdx64-generic.scc \
+    disk.scc \
+    console.scc \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd.scc', '', d)} \
+    ${@bb.utils.contains('INITRAMFS_IMAGE_BUNDLE', '1', 'initramfs-liveusb.scc', '', d)} \
     "
 
 KERNEL_FEATURES = "${@' '.join(['linux-'+d.getVar('PV_MAJOR_MINOR')+'/features/'+feat for feat in d.getVar('AMD_KERNEL_FEATURES').split()])}"
