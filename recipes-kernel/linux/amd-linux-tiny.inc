@@ -18,7 +18,7 @@ KBRANCH ?= "tag=v${PV};mindepth=1;nobranch=1"
 LINUX_VERSION_EXTENSION ?= "-amd-${LINUX_KERNEL_TYPE}"
 AMD_KERNEL_CACHE_URI ?= "git://github.com/under-view/amd-kernel-cache.git;protocol=https;branch=master"
 KSRC ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
-SRCREV_amdmeta ?= "49518b0b5d40c74a26265a779c0a5b5d05ed5d30"
+SRCREV_amdmeta ?= "3e2041ea094baa4bd374c0bda3bf778ef5b8e71a"
 
 PV = "${LINUX_VERSION}"
 PV_MAJOR_MINOR = "${@'.'.join(d.getVar('PV').split('.')[:2])}"
