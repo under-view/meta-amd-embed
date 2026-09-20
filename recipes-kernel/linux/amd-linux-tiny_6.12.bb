@@ -2,4 +2,4 @@ require amd-linux-tiny.inc
 
 LINUX_VERSION = "6.12.101"
 
-SRCREV_amdmeta = "3e2041ea094baa4bd374c0bda3bf778ef5b8e71a"
+SRCREV_amdmeta = "adefda3dcc704c943baca24e3bbda7674d35b6ae"
