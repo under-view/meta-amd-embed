@@ -22,7 +22,7 @@ python clean_build_artifact_dir() {
         shutil.rmtree(artifacts_pn_dir)
 
     artifacts_dir = d.getVar('AMD_ARTIFACTS_DIR')
-    if len(os.listdir(artifacts_dir)) == 0:
+    if os.path.exists(artifacts_dir) and len(os.listdir(artifacts_dir)) == 0:
         os.rmdir(artifacts_dir)
 }
 
